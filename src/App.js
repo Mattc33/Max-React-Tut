@@ -9,61 +9,73 @@ class App extends Component {
             { name: 'Manu', age: 29 },
             { name: 'Stephanie', age: 26 }
         ],
-        showList: false
+        showList: false,
+        showPersons: false
     }
 
     switchNameHandler = (newName, newAge) => {
         this.setState( {
                 persons: [
+                    { name: newName, age: newAge },
+                    { name: newName, age: newAge },
                     { name: newName, age: newAge }
                 ]
             }
         )
     }
 
-    onUserInputHandler = (event) => {
+    onUserInputHandler = (e) => {
         this.setState(
             {
                 persons: [
-                    { name: event.target.value } 
+                    { name: e.target.value },
+                    { name: e.target.value },
+                    { name: e.target.value }
                 ]
             }
         )
     }
 
     hideListHandler = () => {
-        const doesShow = this.state.showList;
-        this.setState({showList: !doesShow});
+        const doesShow = this.state.showPersons;
+        this.setState({showPersons: !doesShow});
     }
 
     render() {
 
+        const style = {
+            backgroundColor: 'green',
+            color: 'white',
+            padding: '8px',
+            cursor: 'pointer'
+        }
+
+        let persons = null;
+
+        if ( this.state.showPersons ) {
+            persons = (
+                <div>
+                    {
+                        this.state.persons.map((person, index) => {
+                            return <Person
+                                click={ () => this.deletePersonHandler(index) }
+                                name={person.name}
+                                age={person.age}
+                                key={person.id}
+                                changed={(event) => this.nameChangedHandler(event, persons)}
+                            />
+                        })
+                    }
+                </div>
+            );
+
+            style.backgroundColor = 'red';
+        }
+
         return (
             <div className="App">
-                <h1> Hello World </h1>
-                <button onClick={this.hideListHandler}>Toggle Content</button>
-                {   this.state.showList === true ? 
-                    <div className="list">
-                        <Person 
-                            name={this.state.persons[0].name} 
-                            age={this.state.persons[0].age}
-                            click={this.switchNameHandler.bind(this, 'Mateo!', 26)}
-                            changed={this.onUserInputHandler}
-                        />
-                        <Person 
-                            name={this.state.persons[1].name} 
-                            age={this.state.persons[1].age}
-                            click={this.switchNameHandler.bind(this, 'Mateo!', 26)}
-                            changed={this.onUserInputHandler}
-                        />
-                        <Person 
-                            name={this.state.persons[2].name} 
-                            age={this.state.persons[2].age}
-                            click={this.switchNameHandler.bind(this, 'Mateo!', 26)}
-                            changed={this.onUserInputHandler}
-                        />
-                    </div> : null
-                }
+                <button onClick={this.hideListHandler} style={style}>Toggle Content</button>
+                {persons}
             </div>
         )
     }
